@@ -1,21 +1,13 @@
-<!--
- * @Author: gooing
- * @since: 2020-04-28 22:05:06
- * @lastTime: 2020-05-20 01:03:04
- * @LastAuthor: gooing
- * @FilePath: \pixiciv-pc\src\components\PublicComponents\ArtistList\index.vue
- * @message:
- -->
+
 <template>
   <div class="artist-list-index">
-    <ul
+    <div
       v-infinite-scroll="load"
       class="artist-list"
       infinite-scroll-immediate
       infinite-scroll-delay="1000"
-      infinite-scroll-distance="10"
     >
-      <li
+      <div
         v-for="artistItem in artistList"
         :key="artistItem.id"
         class="artist-item"
@@ -28,7 +20,7 @@
           <div class="desc">{{ artistItem.comment }}</div>
           <div class="followed-button">
             <el-button round type="primary" @click="follow(artistItem)">
-              {{ artistItem.isFollowed ? "已关注" : "添加关注" }}
+              {{ artistItem.isFollowed ? $t('followed') : $t('follow') }}
             </el-button>
           </div>
         </div>
@@ -36,7 +28,7 @@
           <ul class="picture-array">
             <li
               v-for="(item, index) in artistItem.recentlyIllustrations.filter(
-                item => item.xrestrict === 0 && item.sanityLevel < 6
+                item => item.xrestrict === 0 && item.sanityLevel <= (user ? 5 : 4)
               )"
               :key="index"
               class="picture-item"
@@ -56,19 +48,21 @@
             </li>
           </ul>
         </div>
-      </li>
-    </ul>
+      </div>
+      <p v-if="loading" class="bottom">加载中...</p>
+    </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
   name: 'Index',
   components: {},
   filters: {
     replaceImg(val) {
       return (
-        'https://img.cheerfun.dev:233/c/360x360_70/img-master' +
+        'https://img.cheerfun.dev/c/360x360_70/img-master' +
         val.split('img-master')[1]
       );
     }
@@ -80,12 +74,19 @@ export default {
         return [];
       },
       type: Array
+    },
+    loading: {
+      require: false,
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {};
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['user']),
+  },
   watch: {},
   mounted() {},
   methods: {
@@ -109,9 +110,11 @@ export default {
 
 <style scoped lang="less">
 .artist-list-index {
+  .bottom{
+text-align: center;
+  }
   .artist-list {
-    max-height: calc(100vh - 80px);
-    margin: 0px auto 10px;
+    max-height: calc(100vh - 60px);
     padding: 0px;
     justify-content: center;
     overflow: auto;
@@ -179,14 +182,5 @@ export default {
       }
     }
   }
-}
-/deep/.image-slot {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  background: #f5f7fa;
-  color: #909399;
 }
 </style>

@@ -1,11 +1,4 @@
-<!--
- * @Author: gooing
- * @since: 2020-02-11 12:45:23
- * @lastTime: 2020-04-29 00:40:30
- * @LastAuthor: gooing
- * @FilePath: \pixiciv-pc\src\views\SearchResult\SearchResult.vue
- * @message:
- -->
+
 <template>
   <div class="search-result">
     <virtual-list
@@ -52,7 +45,7 @@ export default {
       beginDate: null, // 画作发布日期限制
       endDate: null, // 画作发布日期限制
       xRestrict: 0,
-      maxSanityLevel: 6,
+      maxSanityLevel: 4,
       page: 1,
       tags: [],
       exclusive: [],

@@ -1,14 +1,7 @@
-/*
- * @Author: gooing
- * @since: 2020-02-02 14:59:46
- * @lastTime: 2020-04-25 16:27:00
- * @LastAuthor: gooing
- * @FilePath: \pixiciv-pc\src\api\base.js
- * @message:
- */
+
 import axios from 'axios';
 import cookie from 'js-cookie';
-
+import i18n from '../i18n';
 // 创建axios实例
 const instance = axios.create({
   baseURL: 'https://api.pixivic.com',
@@ -19,6 +12,18 @@ const instance = axios.create({
   }
 });
 
+export function getLanguage() {
+  const chooseLanguage = cookie.get('language');
+  if (chooseLanguage) return chooseLanguage;
+  const language = (navigator.language || navigator.browserLanguage).toLowerCase();
+  const locales = Object.keys(messages);
+  for (const locale of locales) {
+    if (language.indexOf(locale) > -1) {
+      return locale;
+    }
+  }
+  return 'zh';
+}
 instance.interceptors.request.use(
   config => {
     if (cookie.get('jwt')) {
@@ -44,7 +49,9 @@ instance.interceptors.response.use(
       // 登录过期
       cookie.remove('jwt');
       localStorage.removeItem('user');
-      window.location.href = '/';
+      const message = i18n.tc('filter.loginError');
+      alert(message);
+      setTimeout(() => { window.location.href = '/'; }, 1000);
     }
     return response;
   },
